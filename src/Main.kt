@@ -1,5 +1,5 @@
-import com.mictlan.mvc.Canvas
+import com.mictlan.mvc.Frame
 
 fun main(args: Array<String>) {
-    Canvas.run()
+    Frame.run()
 }

@@ -1,12 +1,14 @@
 package com.mictlan.math.geometry
 
+import java.io.Serializable
 import java.lang.IndexOutOfBoundsException
 import kotlin.math.asin
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
+import com.mictlan.math.utils.equalsEpsilon
 
-data class Vector(override val x: Double =  0.0, override val y: Double = 0.0, override val z: Double = 0.0) : IVector{
+open class Vector(override var x: Double =  0.0, override var y: Double = 0.0, override var z: Double = 0.0) : IVector, Serializable{
 
     override operator fun get(i: Int): Double{
         return when (i) {
@@ -67,4 +69,17 @@ data class Vector(override val x: Double =  0.0, override val y: Double = 0.0, o
     override fun div(k: Double): IVector {
         return Vector(x/k, y/k, z/k)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if(other is IVector){
+            return  Double.equalsEpsilon(x, other.x) &&
+                    Double.equalsEpsilon(y, other.y) &&
+                    Double.equalsEpsilon(z, other.z)
+        }
+        return super.equals(other)
+    }
+    override fun toString(): String {
+        return "{x: $x, y: $y, z: $z}"
+    }
 }
+
