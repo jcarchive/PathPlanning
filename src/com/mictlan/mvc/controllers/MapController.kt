@@ -7,13 +7,26 @@ import com.mictlan.mvc.views.MapView
 import processing.core.PApplet
 import processing.event.KeyEvent
 import processing.event.MouseEvent
+import java.lang.Exception
 
 class MapController(model: Map, view: MapView, guid: String): Controller<Map>(model, view, guid) {
     override fun handleMouseEvent(event: MouseEvent?) {
         when(event?.action) {
             MouseEvent.PRESS -> handleMouseclick(event)
+            MouseEvent.MOVE -> {
+                if(event.isAltDown){
+                    val mousePosition = Vector(event.x.toDouble(), event.y.toDouble())
+                        try {
+                                model.setGoal(mousePosition)
+                                model.findPath()
+                                model.smoothPath()
+                            view.update()
+                        } catch (e: Exception) {
+
+                        }
+                }
+            }
         }
-        super.handleMouseEvent(event)
     }
 
     override fun handleKeyEvent(event: KeyEvent?) {
@@ -35,7 +48,16 @@ class MapController(model: Map, view: MapView, guid: String): Controller<Map>(mo
                         println("Edit: Path found")
                     else
                         println("Edit: Path not found")
-
+                }
+                'x' -> model.splitPath()
+                ' ' -> {
+                    var tryCount = 100
+                    while(tryCount-- > 0) {
+                        if(!model.smoothPath()){
+                            model.splitPath(10)
+                        }
+                    }
+                    model.smoothPath()
                 }
                 PApplet.BACKSPACE -> if(model.buffer.count() > 0) model.buffer.remove(model.buffer.last())
             }
@@ -57,6 +79,7 @@ class MapController(model: Map, view: MapView, guid: String): Controller<Map>(mo
 
         model.buffer.add(mousePosition)
         println("Edit: Added $mousePosition to buffer")
+        view.update()
 
     }
 }
