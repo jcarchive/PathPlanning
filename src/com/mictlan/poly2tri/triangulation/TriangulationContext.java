@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.mictlan.math.geometry.Polygon;
 import com.mictlan.poly2tri.triangulation.delaunay.DelaunayTriangle;
 
 public abstract class TriangulationContext<A extends TriangulationDebugContext>
@@ -45,7 +46,7 @@ public abstract class TriangulationContext<A extends TriangulationDebugContext>
 
     protected ArrayList<TriangulationPoint> _points = new ArrayList<TriangulationPoint>(200);
     protected TriangulationMode _triangulationMode;
-    protected Triangulatable _triUnit;
+    protected Meshable _triUnit;
 
     private boolean _terminated = false;
     private boolean _waitUntilNotified;
@@ -60,8 +61,8 @@ public abstract class TriangulationContext<A extends TriangulationDebugContext>
     }
 
     public abstract TriangulationAlgorithm algorithm();
-    
-    public void prepareTriangulation( Triangulatable t )
+
+    public void prepareTriangulation( Meshable t )
     {
         _triUnit = t;
         _triangulationMode = t.getTriangulationMode();
@@ -80,9 +81,9 @@ public abstract class TriangulationContext<A extends TriangulationDebugContext>
         return _triList;
     }
 
-    public Triangulatable getTriangulatable()
+    public Meshable getTriangulatable()
     {
-        return _triUnit;
+        return null;
     }
     
     public List<TriangulationPoint> getPoints()

@@ -32,5 +32,5 @@ package com.mictlan.poly2tri.triangulation;
 
 public interface TriangulationProcessListener
 {
-    public void triangulationEvent(TriangulationProcessEvent e, Triangulatable unit);
+    public void triangulationEvent(TriangulationProcessEvent e, Meshable unit);
 }

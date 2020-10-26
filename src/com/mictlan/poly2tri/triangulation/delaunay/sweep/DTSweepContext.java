@@ -33,7 +33,7 @@ package com.mictlan.poly2tri.triangulation.delaunay.sweep;
 import java.util.ArrayDeque;
 import java.util.Collections;
 
-import com.mictlan.poly2tri.triangulation.Triangulatable;
+import com.mictlan.poly2tri.triangulation.Meshable;
 import com.mictlan.poly2tri.triangulation.TriangulationAlgorithm;
 import com.mictlan.poly2tri.triangulation.TriangulationContext;
 import com.mictlan.poly2tri.triangulation.TriangulationPoint;
@@ -214,7 +214,7 @@ public class DTSweepContext extends TriangulationContext<DTSweepDebugContext>
     }
 
     @Override
-    public void prepareTriangulation( Triangulatable t )
+    public void prepareTriangulation( Meshable t )
     {
         super.prepareTriangulation( t );
 

@@ -1,9 +1,9 @@
 package com.mictlan.math.geometry
 
 interface IVector{
-    val x: Double
-    val y: Double
-    val z: Double
+    var x: Double
+    var y: Double
+    var z: Double
 
     operator fun get(i: Int): Double
 

@@ -35,6 +35,7 @@ import java.util.Arrays;
 
 import com.mictlan.math.geometry.IVector;
 import com.mictlan.math.geometry.Vector;
+import com.mictlan.math.graphs.IGraph;
 import com.mictlan.poly2tri.triangulation.TriangulationPoint;
 import com.mictlan.poly2tri.triangulation.delaunay.sweep.DTSweepConstraint;
 import processing.core.PApplet;
@@ -706,17 +707,17 @@ public class DelaunayTriangle
         interior = b;        
     }
 
-    double sign (TriangulationPoint p1, TriangulationPoint p2, TriangulationPoint p3)
+    double sign (IVector p1, IVector p2, IVector p3)
     {
         return (p1.getX() - p3.getX()) * (p2.getY() - p3.getY()) - (p2.getX() - p3.getX()) * (p1.getY() - p3.getY());
     }
 
-    public boolean isPointInside(TriangulationPoint pt){
+    public boolean isPointInside(IVector pt){
         double d1, d2, d3;
         boolean has_neg, has_pos;
-        TriangulationPoint v1 = this.points[0];
-        TriangulationPoint v2 = this.points[1];
-        TriangulationPoint v3 = this.points[2];
+        IVector v1 = this.points[0];
+        IVector v2 = this.points[1];
+        IVector v3 = this.points[2];
 
         d1 = sign(pt, v1, v2);
         d2 = sign(pt, v2, v3);

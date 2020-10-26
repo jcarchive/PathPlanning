@@ -9,4 +9,5 @@ interface IView: INode<IView> {
 
     fun draw(canvas: PGraphics)
     fun update()
+    fun toggleLayer(index: Int) { }
 }

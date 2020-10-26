@@ -1,17 +1,18 @@
 package com.mictlan.math.geometry
 
+import com.mictlan.math.geometry.triangulation.MeshTree
 import com.mictlan.poly2tri.geometry.polygon.PolygonVertex
 import com.mictlan.poly2tri.triangulation.TriangulationContext
 import com.mictlan.poly2tri.triangulation.TriangulationMode
 import com.mictlan.poly2tri.triangulation.TriangulationPoint
 import com.mictlan.poly2tri.triangulation.delaunay.DelaunayTriangle
 import kotlin.collections.Collection
-import kotlin.collections.HashMap
 import kotlin.collections.List
 
 class Polygon {
-        val vertex: MutableCollection<TriangulationPoint> = mutableListOf()
+        val vertex: MutableCollection<IVector> = mutableListOf()
         var holes: MutableCollection<Polygon> = mutableListOf()
+        var mesh: MeshTree? = null
 
         var triangles: MutableCollection<DelaunayTriangle> = mutableListOf()
 
@@ -34,7 +35,7 @@ class Polygon {
             holes.add(poly)
         }
 
-        fun getPoints(): Collection<TriangulationPoint> {
+        fun getPoints(): Collection<IVector> {
             return vertex
         }
 
@@ -50,20 +51,16 @@ class Polygon {
             triangles.clear()
         }
 
-        fun prepareTriangulation(tcx: TriangulationContext<*>) {
-            val hint =vertex.size + holes.sumBy { s -> s.pointCount() }
+        fun triangulate(tcx: TriangulationContext<*>) {
+            /*val hint =vertex.size + holes.sumBy { s -> s.pointCount() }
 
             val uniquePts = HashMap<TriangulationPoint, TriangulationPoint>(hint)
             TriangulationPoint.extractUniques(uniquePts, vertex)
-            for (p in holes) {
-                TriangulationPoint.extractUniques(uniquePts, p.vertex)
-            }
+            holes.forEach { hole -> TriangulationPoint.extractUniques(uniquePts, hole.vertex) }
             triangles.clear()
 
             // Outer constraints
-            for (c in vertex.zipWithNext()) {
-                tcx.newConstraint(c.first, c.second)
-            }
+            vertex.zipWithNext().forEach{ c -> tcx.newConstraint(c.first, c.second)}
             tcx.newConstraint(vertex.first(), vertex.last())
 
             // Hole constraints
@@ -74,7 +71,7 @@ class Polygon {
                 tcx.newConstraint(p.vertex.first(), p.vertex.last())
             }
 
-            tcx.addPoints(uniquePts.keys)
+            tcx.addPoints(uniquePts.keys)*/
         }
 
 }

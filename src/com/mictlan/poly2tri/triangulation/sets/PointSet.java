@@ -33,14 +33,13 @@ package com.mictlan.poly2tri.triangulation.sets;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mictlan.math.geometry.IVector;
-import com.mictlan.poly2tri.triangulation.Triangulatable;
+import com.mictlan.poly2tri.triangulation.Meshable;
 import com.mictlan.poly2tri.triangulation.TriangulationContext;
 import com.mictlan.poly2tri.triangulation.TriangulationMode;
 import com.mictlan.poly2tri.triangulation.TriangulationPoint;
 import com.mictlan.poly2tri.triangulation.delaunay.DelaunayTriangle;
 
-public class PointSet implements Triangulatable
+public class PointSet implements Meshable
 {
     List<TriangulationPoint> _points;
     List<DelaunayTriangle> _triangles;

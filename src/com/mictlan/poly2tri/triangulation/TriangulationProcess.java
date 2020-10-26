@@ -62,7 +62,7 @@ public class TriangulationProcess implements Runnable
     private boolean                 _awaitingTermination;
     private boolean                 _restart = false;
     
-    private ArrayList<Triangulatable> _triangulations = new ArrayList<Triangulatable>();
+    private ArrayList<Meshable> _triangulations = new ArrayList<Meshable>();
     
     private ArrayList<TriangulationProcessListener> _listeners = new ArrayList<TriangulationProcessListener>();
     
@@ -168,7 +168,7 @@ public class TriangulationProcess implements Runnable
         start();
     }
 
-    public void triangulate( List<Triangulatable> list )
+    public void triangulate( List<Meshable> list )
     {
         _triangulations.clear();
         _triangulations.addAll( list );
@@ -207,7 +207,7 @@ public class TriangulationProcess implements Runnable
         try
         {
             long time = System.nanoTime();
-            for( Triangulatable t : _triangulations )
+            for( Meshable t : _triangulations )
             {
                 _tcx.clear();
                 _tcx.prepareTriangulation( t );
