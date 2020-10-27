@@ -16,10 +16,11 @@ class MapController(model: Map, view: MapView, guid: String): Controller<Map>(mo
             MouseEvent.MOVE -> {
                 if(event.isAltDown){
                     val mousePosition = Vector(event.x.toDouble(), event.y.toDouble())
-                        try {
-                                model.setGoal(mousePosition)
-                                model.findPath()
-                                model.smoothPath()
+                        try
+                        {
+                            model.setGoal(mousePosition)
+                            model.findPath()
+                            model.pathSmoothing()
                             view.update()
                         } catch (e: Exception) {
 
@@ -49,16 +50,8 @@ class MapController(model: Map, view: MapView, guid: String): Controller<Map>(mo
                     else
                         println("Edit: Path not found")
                 }
+                ' ' -> model.pathSmoothing()
                 'x' -> model.splitPath()
-                ' ' -> {
-                    var tryCount = 100
-                    while(tryCount-- > 0) {
-                        if(!model.smoothPath()){
-                            model.splitPath(10)
-                        }
-                    }
-                    model.smoothPath()
-                }
                 PApplet.BACKSPACE -> if(model.buffer.count() > 0) model.buffer.remove(model.buffer.last())
             }
             if(model.buffer.count() > 0)

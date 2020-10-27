@@ -33,11 +33,14 @@ package com.mictlan.poly2tri.triangulation.delaunay;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.mictlan.math.geometry.ILine;
 import com.mictlan.math.geometry.IVector;
+import com.mictlan.math.geometry.Line;
 import com.mictlan.math.geometry.Vector;
 import com.mictlan.math.graphs.IGraph;
 import com.mictlan.poly2tri.triangulation.TriangulationPoint;
 import com.mictlan.poly2tri.triangulation.delaunay.sweep.DTSweepConstraint;
+import kotlin.reflect.jvm.internal.impl.serialization.deserialization.IncompatibleVersionErrorData;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -727,5 +730,22 @@ public class DelaunayTriangle
         has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
 
         return !(has_neg && has_pos);
+    }
+
+    public static ILine getEdgeBetween(DelaunayTriangle triangleA, DelaunayTriangle triangleB) {
+        IVector a = null;
+        IVector b = null;
+
+        for (IVector pointA: triangleA.points) {
+            for (IVector pointB: triangleB.points) {
+                if(pointA == pointB){
+                    if(a == null) a = pointA;
+                    else if(b == null) b = pointA;
+                    else break;
+                }
+            }
+        }
+
+        return new Line(a, b);
     }
 }

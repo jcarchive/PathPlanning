@@ -12,8 +12,8 @@ import processing.core.PApplet
 
 class MapView(model: Map, guid: String): View<Map>(model, guid) {
     var graphCanvas: PGraphics = context.createGraphics(context.width, context.height)
-    private var showMesh: Boolean = true
-    private var showGraph: Boolean = true
+    private var showMesh: Boolean = false
+    private var showGraph: Boolean = false
     private var showPath: Boolean = true
 
     fun drawBuffer(canvas: PGraphics){
@@ -85,28 +85,29 @@ class MapView(model: Map, guid: String): View<Map>(model, guid) {
         if(model.goal != null) {
             canvas.fill(0f, 255f, 0f)
             canvas.noStroke()
-            canvas.ellipse(model.goal!!.point.x.toFloat(), model.goal!!.point.y.toFloat(), 20f, 20f)
+            canvas.ellipse(model.goal!!.position.x.toFloat(), model.goal!!.position.y.toFloat(), 20f, 20f)
         }
 
         if(model.start != null) {
             canvas.fill(0f, 0f, 255f)
             canvas.noStroke()
-            canvas.ellipse(model.start!!.point.x.toFloat(), model.start!!.point.y.toFloat(), 20f, 20f)
+            canvas.ellipse(model.start!!.position.x.toFloat(), model.start!!.position.y.toFloat(), 20f, 20f)
         }
     }
 
     private fun drawPath(canvas: PGraphics){
-        canvas.noFill()
-        canvas.strokeWeight(10f)
-        canvas.beginShape()
-        if(model.goal?.parent != null && model.start != null){
-            var current = model.goal;
-            while(current != null){
-                canvas.vertex(current.point.x.toFloat(), current.point.y.toFloat())
-                current = current.parent
+        if(model.goal?.parent != null && model.start != null) {
+            canvas.noFill()
+            canvas.strokeWeight(4f)
+            canvas.stroke(0)
+            canvas.beginShape()
+            model.path.forEach { current ->
+                canvas.vertex(current.x.toFloat(), current.y.toFloat());
+                canvas.ellipse(current.x.toFloat(), current.y.toFloat(), 10f ,10f);
             }
+            canvas.endShape()
         }
-        canvas.endShape()
+
     }
     override fun draw(canvas: PGraphics) {
         canvas.clear()
@@ -133,7 +134,7 @@ class MapView(model: Map, guid: String): View<Map>(model, guid) {
     }
 
     private fun genGraphView(){
-        if(model.mapGeometry?.triangles == null) return;
+        if(model.mapGeometry?.triangles == null) return
         graphCanvas.beginDraw()
         graphCanvas.clear()
         graphCanvas.strokeWeight(6f)
@@ -145,21 +146,11 @@ class MapView(model: Map, guid: String): View<Map>(model, guid) {
                     graph -> graph.neighbors
                         .forEach{
                             neighbor ->
-                                graphCanvas.ellipse(graph.point.x.toFloat(), graph.point.y.toFloat(), 10f ,10f)
-                                graphCanvas.vertex(graph.point.x.toFloat(), graph.point.y.toFloat())
-                                graphCanvas.vertex(neighbor.point.x.toFloat(), neighbor.point.y.toFloat())
+                                graphCanvas.ellipse(graph.position.x.toFloat(), graph.position.y.toFloat(), 10f ,10f)
+                                graphCanvas.vertex(graph.position.x.toFloat(), graph.position.y.toFloat())
+                                graphCanvas.vertex(neighbor.position.x.toFloat(), neighbor.position.y.toFloat())
                         }
                 }
-        for (triangle in model.mapGeometry!!.triangles) {
-            if(!triangle.isInterior) continue
-            val current = triangle.centroid()
-            for (neighbor in triangle.neighbors) {
-                if(neighbor == null || !neighbor.isInterior) continue
-                val next = neighbor.centroid()
-                graphCanvas.vertex(current.x.toFloat(), current.y.toFloat())
-                graphCanvas.vertex(next.x.toFloat(), next.y.toFloat())
-            }
-        }
         graphCanvas.endShape()
         graphCanvas.endDraw()
 
