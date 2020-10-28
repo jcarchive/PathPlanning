@@ -52,6 +52,7 @@ class MapController(model: Map, view: MapView, guid: String): Controller<Map>(mo
                 }
                 ' ' -> model.pathSmoothing()
                 'x' -> model.splitPath()
+                'r' -> {model.splitPath(); model.pathSmoothing()}
                 PApplet.BACKSPACE -> if(model.buffer.count() > 0) model.buffer.remove(model.buffer.last())
             }
             if(model.buffer.count() > 0)

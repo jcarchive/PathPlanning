@@ -2,10 +2,8 @@ package com.mictlan.mvc.models
 
 import com.mictlan.math.geometry.ILine
 import com.mictlan.math.geometry.IVector
-import com.mictlan.math.graphs.Astar
-import com.mictlan.math.graphs.CellGraph
-import com.mictlan.math.graphs.PointGraph
-import com.mictlan.math.graphs.Search
+import com.mictlan.math.graphs.*
+import com.mictlan.math.graphs.Graph.Companion.buildPath
 import com.mictlan.poly2tri.Poly2Tri
 import com.mictlan.poly2tri.geometry.polygon.Polygon
 import com.mictlan.poly2tri.geometry.polygon.PolygonVertex
@@ -94,7 +92,7 @@ class Map {
             goal!!.neighbors.forEach { neighbor -> neighbor.neighbors.remove(goal!!) }
         }
         goal = setCellGraphFromPosition( goalPosition)?: return null
-        goal!!.pathCost = Double.MIN_VALUE
+        goal!!.stepCost = Double.MIN_VALUE
         goal!!.heuristic = Double.MIN_VALUE
 
         graphs[goal!!.index] = goal!!
@@ -107,7 +105,7 @@ class Map {
             start!!.neighbors.forEach { neighbor -> neighbor.neighbors.remove(start!!) }
         }
         start = setCellGraphFromPosition( startPosition)?: return null
-        start!!.pathCost = 0.0
+        start!!.stepCost = 0.0
         start!!.heuristic = 0.0
         graphs[start!!.index] = start!!
         return start
@@ -123,14 +121,15 @@ class Map {
             }
             Search.SearchResultStatus.FOUND -> {
                 println("Map: Path search, path found");
-                path = CellGraph.buildPath(goal!!)
+                path = Graph.buildPath(goal!!).map { g -> g.position }
                 true
             }
         }
     }
 
     fun pathSmoothing(){
-        val graphs = path.map { point -> PointGraph(point, mutableListOf()) }.toList()
+        pathGraphs.clear()
+        val graphs = path.mapIndexed { i, point -> PointGraph(point, mutableListOf(), i.toDouble()) }.toList()
         graphs.forEach { g -> pathGraphs[g.index] = g }
 
         for ((index, current) in graphs.withIndex()) {
@@ -141,10 +140,9 @@ class Map {
             current.neighbors.addAll(neighbors)
             neighbors.forEach { n -> n.neighbors.add(current) }
         }
-
-        val search = Astar(graphs.first(), graphs.last())
+        val search: Search<PointGraph> = Dijkstra(graphs.first(), graphs.last())
         if(search.search(10000) == Search.SearchResultStatus.FOUND){
-            path = PointGraph.buildPath(graphs.last())
+            path = buildPath(graphs.last()).map { g -> g.position }
             println("Map: Path smooth success")
         }else{
             println("Map: Path smooth fail")

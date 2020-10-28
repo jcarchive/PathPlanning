@@ -1,14 +1,16 @@
 package com.mictlan.math.graphs
 
-interface  IGraph<T: IGraph<T>>{
-    val index:Int
+interface  IGraph<T: IGraph<T>> {
+    val index: Int
     val weight: Double
-    var pathCost: Double
+    var stepCost: Double
     var heuristic: Double
+
+    val pathCost: Double
 
     var parent: T?
     var neighbors: MutableCollection<T>
 
-    fun calculateHeuristic( parent: T, goal: T): Double
-    fun calculatePathcost(parent: T, goal: T): Double
+    fun calculateHeuristic(goal: T): Double
+    fun calculateStepCost(parent: T): Double
 }

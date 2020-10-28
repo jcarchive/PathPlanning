@@ -15,6 +15,7 @@ class MapView(model: Map, guid: String): View<Map>(model, guid) {
     private var showMesh: Boolean = false
     private var showGraph: Boolean = false
     private var showPath: Boolean = true
+    private var showPathGraph: Boolean = true
 
     fun drawBuffer(canvas: PGraphics){
         canvas.push()
@@ -95,6 +96,21 @@ class MapView(model: Map, guid: String): View<Map>(model, guid) {
         }
     }
 
+    private fun drawPathGraph(canvas: PGraphics){
+            canvas.noFill()
+            canvas.strokeWeight(4f)
+            canvas.stroke(10f,100f,255f)
+            model.pathGraphs.values.forEach { current ->
+                for (neighbor in current.neighbors) {
+                    canvas.line(
+                            current.position.x.toFloat(), current.position.y.toFloat(),
+                            neighbor.position.x.toFloat(), neighbor.position.y.toFloat()
+                    )
+                }
+                canvas.ellipse(current.position.x.toFloat(), current.position.y.toFloat(), 10f ,10f);
+            }
+    }
+
     private fun drawPath(canvas: PGraphics){
         if(model.goal?.parent != null && model.start != null) {
             canvas.noFill()
@@ -120,6 +136,11 @@ class MapView(model: Map, guid: String): View<Map>(model, guid) {
             if(showPath){
                 canvas.push()
                 drawPath(canvas)
+                canvas.pop()
+            }
+            if(showPathGraph){
+                canvas.push()
+                drawPathGraph(canvas)
                 canvas.pop()
             }
 
@@ -158,6 +179,8 @@ class MapView(model: Map, guid: String): View<Map>(model, guid) {
 
     override fun toggleLayer(index: Int) {
         when(index){
+
+            '3'.toInt() -> {showPathGraph= !showPathGraph; println("Edit: ShowPathGraph $showPathGraph")}
             '2'.toInt() -> {showPath = !showPath; println("Edit: ShowPath $showPath")}
             '1'.toInt() -> { showMesh = !showMesh; println("Edit: ShowMesh $showMesh")}
             '0'.toInt() -> { showGraph= !showGraph; println("Edit: ShowGraph $showGraph")}

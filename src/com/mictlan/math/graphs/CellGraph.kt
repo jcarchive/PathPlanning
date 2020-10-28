@@ -5,24 +5,12 @@ import com.mictlan.poly2tri.triangulation.delaunay.DelaunayTriangle
 
 class CellGraph(val position: IVector, val cell: DelaunayTriangle, neighbors: MutableCollection<CellGraph>) : Graph<CellGraph>(neighbors) {
 
-    companion object{
-        fun buildPath( end: CellGraph): Collection<IVector>{
-            val path: MutableCollection<IVector> = mutableListOf()
-            var current: CellGraph? = end
-            while(current != null){
-                path.add(current.position)
-                current = current.parent
-            }
-
-            return path.reversed()
-        }
-    }
-    override fun calculateHeuristic(parent: CellGraph, goal: CellGraph): Double {
-        return (position  - goal.position).magnitude()
+    override fun calculateHeuristic(goal: CellGraph): Double {
+        return (goal.position - position).magnitude()
     }
 
-    override fun calculatePathcost(parent: CellGraph, goal: CellGraph): Double {
-        return parent.pathCost + (position - parent.position).magnitude()
+    override fun calculateStepCost(parent: CellGraph): Double {
+        return (parent.position - position).magnitude()
     }
 
 
@@ -31,5 +19,11 @@ class CellGraph(val position: IVector, val cell: DelaunayTriangle, neighbors: Mu
             return other.index == this.index
         }
         return super.equals(other)
+    }
+
+    override fun hashCode(): Int {
+        var result = position.hashCode()
+        result = 31 * result + cell.hashCode()
+        return result
     }
 }
