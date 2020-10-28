@@ -70,14 +70,6 @@ open class Vector(override var x: Double =  0.0, override var y: Double = 0.0, o
         return Vector(x/k, y/k, z/k)
     }
 
-    override fun equals(other: Any?): Boolean {
-        if(other is IVector){
-            return  Double.equalsEpsilon(x, other.x) &&
-                    Double.equalsEpsilon(y, other.y) &&
-                    Double.equalsEpsilon(z, other.z)
-        }
-        return super.equals(other)
-    }
     override fun toString(): String {
         return "{x: $x, y: $y, z: $z}"
     }

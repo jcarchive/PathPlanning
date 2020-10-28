@@ -14,7 +14,7 @@ class Dijkstra<T: IGraph<T>>(start: T, goal: T): Search<T>(start, goal){
 
             for (neighbor in current.neighbors) {
                 val tentativeStepCost = neighbor.calculateStepCost(current)
-                val tentativeCost =  tentativeStepCost + if (neighbor.parent == null )  0.0 else neighbor.pathCost
+                val tentativeCost =  tentativeStepCost + current.pathCost
                 if(tentativeCost < neighbor.pathCost){
                     neighbor.stepCost = tentativeStepCost
                     neighbor.parent = current
@@ -26,6 +26,7 @@ class Dijkstra<T: IGraph<T>>(start: T, goal: T): Search<T>(start, goal){
             open.removeIf { graph -> graph.index == current.index}
             visited[current.index] = current
         }
+        if(control <= 0) println("Dijkstra: Max iteration reached")
         if(goal.parent != null) return SearchResultStatus.FOUND
         return Search.SearchResultStatus.MAX_ITERATION_REACHED
     }

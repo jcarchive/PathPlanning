@@ -25,6 +25,13 @@ class Astar<T: IGraph<T>>(start: T, goal: T): Search<T>(start, goal){
                     neighbor.heuristic = h
                     neighbor.stepCost = g
                     open.add(neighbor)
+                }else{
+                    val tentativeCost = h + g + current.pathCost
+                    if(tentativeCost < neighbor.pathCost){
+                        neighbor.parent = current
+                        neighbor.heuristic = h
+                        neighbor.stepCost = g
+                    }
                 }
             }
             open.removeIf { graph -> graph.index == current.index}

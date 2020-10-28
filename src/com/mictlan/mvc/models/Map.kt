@@ -129,25 +129,26 @@ class Map {
 
     fun pathSmoothing(){
         pathGraphs.clear()
-        val graphs = path.mapIndexed { i, point -> PointGraph(point, mutableListOf(), i.toDouble()) }.toList()
-        graphs.forEach { g -> pathGraphs[g.index] = g }
+        var graphs = path.map { p -> PointGraph(p,  mutableListOf()) }
+        val start = graphs.first()
+        val end = graphs.last()
 
         for ((index, current) in graphs.withIndex()) {
-            if(index >= graphs.size - 1 ) break
-
-            val neighbors = graphs.subList(index + 1, graphs.size)
-                    .filter { p -> !isInCollision(current.position, p.position) }
-            current.neighbors.addAll(neighbors)
-            neighbors.forEach { n -> n.neighbors.add(current) }
+            pathGraphs[current.index] = current
+            for (cmp in graphs.subList(index, graphs.size)) {
+                if(cmp == current) continue
+                if(!isInCollision(current.position, cmp.position)){
+                    current.neighbors.add(cmp)
+                }
+            }
         }
-        val search: Search<PointGraph> = Dijkstra(graphs.first(), graphs.last())
-        if(search.search(10000) == Search.SearchResultStatus.FOUND){
-            path = buildPath(graphs.last()).map { g -> g.position }
-            println("Map: Path smooth success")
+        val search = Dijkstra(start, end)
+        if(search.search() == Search.SearchResultStatus.FOUND){
+            println("Mat: Pathsmoothing success")
+            path = buildPath(end).map { g -> g.position }
         }else{
-            println("Map: Path smooth fail")
+            println("Mat: Path smoothing failed")
         }
-
     }
 
     fun splitPath(){
