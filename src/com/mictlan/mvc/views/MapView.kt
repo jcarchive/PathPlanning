@@ -24,7 +24,7 @@ class MapView(model: Map, guid: String): View<Map>(model, guid) {
         canvas.noFill()
         canvas.beginShape()
         model.buffer.forEach {p -> canvas.vertex(p.x.toFloat(), p.y.toFloat()) }
-        canvas.endShape()
+        canvas.endShape(PApplet.CLOSE)
         canvas.pop()
     }
 

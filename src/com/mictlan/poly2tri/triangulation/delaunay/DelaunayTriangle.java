@@ -47,6 +47,7 @@ import processing.core.PVector;
 
 public class DelaunayTriangle
 {
+
     public boolean isHoleTriangle = false;
     public DelaunayTriangle parentPath = null;
     /** Neighbor pointers */

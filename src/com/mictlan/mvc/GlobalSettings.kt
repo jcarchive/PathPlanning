@@ -5,7 +5,7 @@ import com.mictlan.mvc.utils.Color
 class GlobalSettings {
     companion object{
         val TextColor: Color = Color( 27f,27f,27f)
-        val BackgroundColor: Color = Color(225f,225f,225f)
+        val BackgroundColor: Color = Color(130f,134f,134f)
         val ObstaclesColor:  Color = Color( 20f, 20f, 20f)
         val PrimaryColor: Color = Color(0f,0f,0f)
         val SecondaryColor: Color = Color(0f,0f,0f)

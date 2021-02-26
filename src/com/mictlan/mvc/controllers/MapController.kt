@@ -35,6 +35,14 @@ class MapController(model: Map, view: MapView, guid: String): Controller<Map>(mo
             when(event.key){
                 '\n' -> model.pushBuffer()
                 in '0'..'9' -> view.toggleLayer(event.key.toInt())
+                'l'->{
+
+                    model.setGoal(Vector(context.mouseX.toDouble(), context.mouseY.toDouble()))?: println("Edit: Goal can't be set")
+                    if(model.findPath())
+                        model.pathSmoothing()
+                    else
+                        println("Edit: Path not found")
+                }
                 'g'-> {
                     model.setGoal(Vector(context.mouseX.toDouble(), context.mouseY.toDouble()))?: println("Edit: Goal can't be set")
                 }
@@ -68,6 +76,23 @@ class MapController(model: Map, view: MapView, guid: String): Controller<Map>(mo
 
     private fun handleMouseclick(event: MouseEvent)
     {
+        if(event.isAltDown){
+            if(event.action == MouseEvent.DRAG){
+                model.setGoal(Vector(context.mouseX.toDouble(), context.mouseY.toDouble()))?: println("Edit: Goal can't be set")
+                if(model.findPath()) {
+                    model.pathSmoothing()
+                    for(j in 1..5) {
+                        model.splitPath()
+                        model.splitPath()
+                        model.splitPath()
+                        model.splitPath()
+                        model.pathSmoothing()
+                    }
+                }
+                else
+                    println("Edit: Path not found")
+            }
+        }
         if(!event.isControlDown) return;
         val mousePosition: IVector = Vector(event.x.toDouble(), event.y.toDouble())
 

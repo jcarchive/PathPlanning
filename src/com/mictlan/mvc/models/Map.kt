@@ -4,10 +4,13 @@ import com.mictlan.math.geometry.ILine
 import com.mictlan.math.geometry.IVector
 import com.mictlan.math.graphs.*
 import com.mictlan.math.graphs.Graph.Companion.buildPath
+import com.mictlan.math.legacy.geometry.*
 import com.mictlan.poly2tri.Poly2Tri
 import com.mictlan.poly2tri.geometry.polygon.Polygon
 import com.mictlan.poly2tri.geometry.polygon.PolygonVertex
 import com.mictlan.poly2tri.triangulation.delaunay.DelaunayTriangle
+import processing.core.PVector
+import java.util.*
 import kotlin.collections.HashMap
 import kotlin.math.max
 import kotlin.math.min
@@ -17,19 +20,66 @@ class Map {
     var goal: CellGraph? = null
     var start: CellGraph? = null
     var mapGeometry: Polygon? = null
-    val buffer: MutableCollection<IVector> = mutableListOf()
+    val buffer: LinkedList<IVector> = LinkedList()
     var graphs: MutableMap<Int, CellGraph> = HashMap()
 
     var pathGraphs: MutableMap<Int, PointGraph> = HashMap()
     var path: Collection<IVector> = mutableListOf()
+    val r = 10f;
 
     fun pushBuffer() {
         if(buffer.count() < 3) {
             println("Edit: Attempted to create polygon with ${buffer.count()}")
             return;
         }
+        var obstacle = mutableListOf<IPoint>();
+        var i = 0;
+        var iter = buffer.listIterator();
+        while( iter.hasNext()){
+            i++
+            var b: IPoint
+            var a: IPoint
+            var c: IPoint
+            if (!iter.hasPrevious()) a = Point(buffer.last.x.toFloat(), buffer.last.y.toFloat() )else {
+                val ap = iter.previous()
+                a = Point(ap.x.toFloat(), ap.y.toFloat());
+                iter.next()
+            }
+            val bp = iter.next()
+            b = Point(bp.x.toFloat(), bp.y.toFloat());
+            if (!iter.hasNext()) c = obstacle.first() else {
+                val cp = iter.next()
+                c =  Point(cp.x.toFloat(), cp.y.toFloat());
+                iter.previous()
+            }
+            val lineAB = Line(a, b)
+            val lineBC = Line(b, c)
 
-        val shape = Polygon(buffer.map { PolygonVertex(it.x, it.y, it.z) })
+            val nAB: PVector = lineAB.normal.mult(r)
+            val nBC: PVector = lineBC.normal.mult(r)
+
+            val eA = Point(a.asVector().copy().add(nAB))
+            val eBa = Point(b.asVector().copy().add(nAB))
+            val eBc = Point(b.asVector().copy().add(nBC))
+            val eC = Point(c.asVector().copy().add(nBC))
+
+            val extrudedLineAB = Line(eA, eBa)
+            val extrudedLineBC = Line(eBc, eC)
+
+            val p: LineIntersection? =  com.mictlan.math.legacy.geometry.ILine.extendedIntersection(extrudedLineAB, extrudedLineBC)
+
+            if (IPoint.orientation(a, b, c) === PointOrientation.LIES_LEFT) {
+                p?.point?.x?.let { Point(it, p.point.y) }?.let { obstacle.add(it)};
+            } else {
+                var m = IPoint.middlePoint(eBa, eBc).asVector()
+                m = m.sub(b.asVector()).normalize().mult(r).add(b.asVector())
+                obstacle.add(Point(eBa.x, eBa.y));
+                obstacle.add(Point(m.x, m.y));
+                obstacle.add(Point(eBc.x, eBc.y));
+            }
+        }
+
+        val shape = Polygon( obstacle.map { PolygonVertex(it.x.toDouble(), it.y.toDouble(), 0.0) })
         buffer.clear()
 
         if(mapGeometry == null){
@@ -155,7 +205,7 @@ class Map {
         val resultPath = mutableListOf<IVector>()
         for ((a, b) in path.zipWithNext()) {
             resultPath.add(a)
-            resultPath.add((b - a)/2.0 + a)
+            resultPath.add((a + b)/2.0)
         }
 
         resultPath.add(path.last())

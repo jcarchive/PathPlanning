@@ -30,7 +30,7 @@ class Frame: PApplet() {
     }
 
     override fun settings() {
-        size(800,500)
+        size(500,500)
     }
 
     override fun setup() {
@@ -73,10 +73,18 @@ class Frame: PApplet() {
         }
     }
 
+    private var i: Int = 0;
     override fun handleKeyEvent(event: KeyEvent?) {
         super.handleKeyEvent(event)
         for (iController in controllers) {
             iController.handleKeyEvent(event)
+        }
+        if (event != null && event.action == KeyEvent.PRESS) {
+            if(event.isControlDown) {
+                if( event.key == '\u0013') {
+                    saveFrame(String.format("caso2-%d.png", i++));
+                }
+            }
         }
 
     }
